@@ -28,7 +28,13 @@ h1, h2, h3, h4 {
 }
 
 .date {
+    float: right;
+    text-align: right;
     color: #828282;
+}
+
+.post-title {
+
 }
 
 .save {
