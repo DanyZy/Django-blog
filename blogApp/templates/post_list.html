@@ -12,6 +12,9 @@
                 </div>
                 <h1 class="post-title"><a href="{% url 'post_detail' pk=post.pk %}"> {{ post.get_excerpt_title }}</a></h1>
                 <p>{{ post.get_excerpt_text }}</p>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="img-responsive"/>
+                {% endif %}
                 <p><a herf="#" class="btn btn-primary" role="button">Button</a></p>
             </div>
         </div>
@@ -19,6 +22,7 @@
     {% empty %}
         <h1>Nothing</h1>
     {% endfor %}
+    </div>
         <div class="pagination">
             <span class="step-links">
             {% if posts.has_previous %}
@@ -36,5 +40,4 @@
             {% endif %}
             </span>
         </div>
-    </div>
 {% endblock %}

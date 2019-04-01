@@ -12,12 +12,7 @@ def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-created_date')
     paginator = Paginator(posts, 5)
     page = request.GET.get('page')
-    try:
-        posts = paginator.page(page)
-    except PageNotAnIntager:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
+    posts = paginator.get_page(page)
     return render(request, 'post_list.html', {'posts': posts})
 
 
@@ -28,7 +23,7 @@ def post_detail(request, pk):
 
 def post_new(request):
     if request.method == "POST":
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES or None)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -46,7 +41,7 @@ def post_new(request):
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, request.FILES or None, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
