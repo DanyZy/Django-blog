@@ -18,7 +18,7 @@ class Post(models.Model):
         return self.title
 
     def get_excerpt_text(self):
-        return self.text[:40] + "..." if len(self.text) > 40 else self.text
+        return self.text[:90] + "..." if len(self.text) > 90 else self.text
 
     def get_excerpt_title(self):
         return self.title[:10] + "..." if len(self.title) > 10 else self.title
