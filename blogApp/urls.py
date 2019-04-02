@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^post/(?P<pk>\d+)/delete/$', views.post_delete, name='post_delete'),
     url(r'^registration/$', views.registration, name='registration'),
     url(r'^authorization/$', views.authorization, name='authorization'),
+    url(r'^logout/$', views.login_out, name='logout'),
 ]
 
 if settings.DEBUG:

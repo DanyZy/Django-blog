@@ -3,31 +3,34 @@
 
 {% block content %}
     <div class="row">
-    {% for post in posts %}
-    <div class="col-sm-6 col-sm-offset-3">
-        <div class="thumbnail">
-            <div class="caption">
-                <div class="date">
-                    {{ post.published_date|timesince }} назад
+        <form method="GET" action="">
+            <input type="text" name="q" placeholder="Search posts" value="{{ request.GET.q }}"/>
+            <input type="submit" value="Search"/>
+        {% for post in posts %}
+        <div class="col-sm-6 col-sm-offset-3">
+            <div class="thumbnail">
+                <div class="caption">
+                    <div class="date">
+                        {{ post.published_date|timesince }} назад
+                    </div>
+                    <h1 class="post-title"><a href="{% url 'post_detail' pk=post.pk %}"> {{ post.get_excerpt_title }}</a></h1>
+                    <p>{{ post.get_excerpt_text }}</p>
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" class="img-responsive"/>
+                    {% endif %}
+                    <p><a herf="#" class="btn btn-primary" role="button">Button</a></p>
                 </div>
-                <h1 class="post-title"><a href="{% url 'post_detail' pk=post.pk %}"> {{ post.get_excerpt_title }}</a></h1>
-                <p>{{ post.get_excerpt_text }}</p>
-                {% if post.image %}
-                    <img src="{{ post.image.url }}" class="img-responsive"/>
-                {% endif %}
-                <p><a herf="#" class="btn btn-primary" role="button">Button</a></p>
             </div>
         </div>
-    </div>
-    {% empty %}
-        <h1>Nothing</h1>
-    {% endfor %}
+        {% empty %}
+            <h1>Nothing</h1>
+        {% endfor %}
     </div>
         <div class="pagination">
             <span class="step-links">
             {% if posts.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ posts.previous_page_number }}">previous</a>
+                <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo; first</a>
+                <a href="?page={{ posts.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
             {% endif %}
 
             <span class="current">
@@ -35,8 +38,8 @@
             </span>
 
             {% if posts.has_next %}
-                <a href="?page={{ posts.next_page_number }}">next</a>
-                <a href="?page={{ posts.paginator.num_pages }}">last &raquo;</a>
+                <a href="?page={{ posts.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a>
+                <a href="?page={{ posts.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">last &raquo;</a>
             {% endif %}
             </span>
         </div>

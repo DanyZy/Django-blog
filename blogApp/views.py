@@ -2,14 +2,23 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from .forms import PostForm
 from .models import Post
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.http import Http404
+from django.db.models import Q
 
 
 def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-created_date')
+    query = request.GET.get('q')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__search=query) |
+            Q(text__search=query) |
+            Q(author__search=query)
+        ).distinct()
     paginator = Paginator(posts, 5)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
@@ -22,6 +31,8 @@ def post_detail(request, pk):
 
 
 def post_new(request):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES or None)
         if form.is_valid():
@@ -39,6 +50,8 @@ def post_new(request):
 
 
 def post_edit(request, pk):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES or None, instance=post)
@@ -57,6 +70,8 @@ def post_edit(request, pk):
 
 
 def post_delete(request, pk):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404
     post = Post.objects.get(pk=pk)
     post.delete()
     messages.success(request, "Successfully Deleted")
@@ -102,3 +117,8 @@ def authorization(request):
             return render(request, 'authorization.html', {'form': form})
     else:
         return render(request, 'authorization.html', {})
+
+
+def login_out(request):
+    logout(request)
+    return redirect('post_list')
