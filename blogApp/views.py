@@ -15,9 +15,8 @@ def post_list(request):
     query = request.GET.get('q')
     if query:
         posts = Post.objects.filter(
-            Q(title__search=query) |
-            Q(text__search=query) |
-            Q(author__search=query)
+            Q(title__iregex=r'\b' + query + r'\b') |
+            Q(text__iregex=r'\b' + query + r'\b')
         ).distinct()
     paginator = Paginator(posts, 5)
     page = request.GET.get('page')

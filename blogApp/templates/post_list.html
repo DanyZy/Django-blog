@@ -3,7 +3,7 @@
 
 {% block content %}
     <div class="row">
-        <form method="GET" action="">
+        <form method="GET" action=""/>
             <input type="text" name="q" placeholder="Search posts" value="{{ request.GET.q }}"/>
             <input type="submit" value="Search"/>
         {% for post in posts %}
